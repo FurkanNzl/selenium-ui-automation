@@ -1,64 +1,73 @@
-# SauceDemo UI Test Otomasyonu
+# SauceDemo UI Test Automation
 
-Selenium 4 + Java + TestNG + Maven ile yazilmis, **Page Object Model (POM)** mimarisine uygun ornek bir UI test otomasyon projesi. Hedef site: [SauceDemo (Swag Labs)](https://www.saucedemo.com).
+A UI test automation framework for [SauceDemo (Swag Labs)](https://www.saucedemo.com), built with **Selenium 4, Java, TestNG and Maven** following the **Page Object Model (POM)** design pattern.
 
-## Bu projede ne var?
+## Features
 
-- **Page Object Model** mimarisi (her sayfa ayri bir sinif)
-- **Explicit wait** kullanimi (`Thread.sleep` YOK -> daha hizli ve guvenilir testler)
-- **Data-driven testing** (TestNG `@DataProvider` ile ayni testi farkli verilerle kosma)
-- **Config dosyasi** ile ayarlarin (URL, tarayici, bekleme suresi) koddan ayrilmasi
-- **ThreadLocal WebDriver** (ileride paralel calistirmaya hazir altyapi)
-- Uctan uca (E2E) satin alma senaryosu
+- **Page Object Model** architecture (one class per page)
+- **Explicit waits** instead of `Thread.sleep` for faster and more reliable tests
+- **Data-driven testing** with TestNG `@DataProvider` (same test, multiple data sets)
+- **Externalized configuration** (URL, browser, timeouts) kept out of the code
+- **ThreadLocal WebDriver**, making the framework ready for parallel execution
+- **End-to-end (E2E)** checkout scenario
 
-## Gereksinimler
+## Requirements
 
-| Arac   | Surum |
-|--------|-------|
-| JDK    | 17 veya uzeri |
-| Maven  | 3.8+ (IntelliJ ile birlikte gelir) |
-| Chrome | Guncel bir surum |
-| IDE    | IntelliJ IDEA (onerilir) |
+| Tool   | Version                              |
+| ------ | ------------------------------------ |
+| JDK    | 17 or higher                         |
+| Maven  | 3.8+ (bundled with IntelliJ IDEA)    |
+| Chrome | Latest version                       |
+| IDE    | IntelliJ IDEA (recommended)          |
 
-> **Driver indirmene GEREK YOK!** Selenium 4.6+ ile gelen **Selenium Manager**, tarayicina uygun chromedriver'i otomatik indirir. Sadece Chrome kurulu olsun yeter.
+> **No need to download a driver.** Selenium Manager (included since Selenium 4.6) automatically downloads the right ChromeDriver for your browser. Just make sure Chrome is installed.
 
-## Kurulum ve Calistirma
+## Getting Started
 
-### 1. Projeyi ac
-Zip'i cikar -> IntelliJ'de **File > Open** -> proje klasorunu sec. IntelliJ, Maven bagimliliklarini (Selenium, TestNG) otomatik indirir. Ilk acilista biraz surebilir.
+### 1. Clone the project
 
-### 2. Testleri calistir
+```
+git clone https://github.com/FurkanNzl/selenium-ui-automation.git
+```
 
-**Yol A - Terminalden (tum suite):**
+Then open the project folder in IntelliJ IDEA via **File > Open**. IntelliJ downloads the Maven dependencies (Selenium, TestNG) automatically; the first import may take a moment.
+
+### 2. Run the tests
+
+**Option A – From the terminal (full suite):**
+
 ```
 mvn test
 ```
 
-**Yol B - IntelliJ'den:**
-- `testng.xml` dosyasina sag tikla -> **Run**
-- veya tek bir test sinifina/metoduna sag tikla -> **Run**
+**Option B – From IntelliJ IDEA:**
 
-### 3. Raporu gor
-Calistirma sonrasi TestNG raporu surada olusur:
+- Right-click `testng.xml` → **Run**
+- Or right-click any test class or method → **Run**
+
+### 3. View the report
+
+After a run, the TestNG report is generated at:
+
 ```
 test-output/index.html
 ```
 
-## Proje Yapisi
+## Project Structure
 
 ```
 selenium-ui-automation/
-├── pom.xml                      -> Maven yapilandirmasi + bagimliliklar
-├── testng.xml                   -> Hangi testlerin calisacagini tanimlayan suite
+├── pom.xml                      -> Maven configuration and dependencies
+├── testng.xml                   -> Test suite definition
 └── src/
     ├── main/java/com/furkan/saucedemo/
     │   ├── config/
-    │   │   └── ConfigReader.java     -> config.properties'i okur
+    │   │   └── ConfigReader.java     -> Reads config.properties
     │   ├── driver/
-    │   │   └── DriverFactory.java    -> WebDriver'i olusturur/kapatir
+    │   │   └── DriverFactory.java    -> Creates and quits the WebDriver
     │   ├── base/
-    │   │   └── BasePage.java         -> Ortak metotlar (click, type, wait...)
-    │   └── pages/                    -> Her sayfa = bir Page Object
+    │   │   └── BasePage.java         -> Shared actions (click, type, wait...)
+    │   └── pages/                    -> One Page Object per page
     │       ├── LoginPage.java
     │       ├── ProductsPage.java
     │       ├── CartPage.java
@@ -68,49 +77,49 @@ selenium-ui-automation/
     └── test/
         ├── java/com/furkan/saucedemo/
         │   ├── base/
-        │   │   └── BaseTest.java     -> Kurulum/yikim (@BeforeMethod / @AfterMethod)
+        │   │   └── BaseTest.java     -> Setup and teardown (@BeforeMethod / @AfterMethod)
         │   └── tests/
-        │       ├── LoginTest.java          -> Login senaryolari (data-driven)
-        │       ├── ProductsCartTest.java   -> Urun & sepet senaryolari
-        │       └── CheckoutE2ETest.java    -> Uctan uca satin alma
+        │       ├── LoginTest.java          -> Login scenarios (data-driven)
+        │       ├── ProductsCartTest.java   -> Product and cart scenarios
+        │       └── CheckoutE2ETest.java    -> End-to-end checkout
         └── resources/
-            └── config.properties    -> URL, tarayici, bekleme suresi
+            └── config.properties    -> URL, browser, timeouts
 ```
 
-## Mimari Neden Boyle? (Katmanlar)
+## Architecture
 
-**1. Page Object Model (pages/)**
-Her web sayfasi icin ayri bir sinif. Sayfanin locator'lari ve o sayfada yapilabilecek islemler (login yap, sepete ekle...) tek yerde toplanir. Site degisirse sadece ilgili Page Object'i guncellersin, onlarca testi tek tek duzeltmezsin.
+**1. Page Object Model (`pages/`)**
+Each web page has its own class that holds its locators and the actions available on it (log in, add to cart...). When the site changes, only the related Page Object needs updating instead of dozens of tests.
 
 **2. BasePage**
-Tum sayfalarin ortak ihtiyaclari (tikla, yaz, bekle) burada. Tekrari onler (DRY).
+Common actions every page needs (click, type, wait) live here, avoiding duplication (DRY).
 
 **3. DriverFactory**
-Tarayici acma/kapama mantigi testlerden ayri. `ThreadLocal` sayesinde paralel calistirmaya hazir.
+Browser setup and teardown are kept separate from the tests. Thanks to `ThreadLocal`, the framework is ready for parallel execution.
 
 **4. ConfigReader + config.properties**
-Sabit degerleri (URL vs.) koddan ayirir. Farkli ortam/tarayici icin kodu degistirmezsin, sadece properties'i.
+Fixed values such as the URL are kept out of the code. Switching environments or browsers only requires editing the properties file.
 
 **5. BaseTest**
-Her testten once tarayici acilir, sonra kapanir. Testler birbirinden bagimsiz ve temiz calisir.
+A fresh browser is opened before each test and closed after it, so tests run independently and cleanly.
 
-## Config Ayarlari
+## Configuration
 
 `src/test/resources/config.properties`:
 
-| Ayar | Aciklama | Ornek |
-|------|----------|-------|
-| `base.url` | Test edilecek site | `https://www.saucedemo.com` |
-| `browser` | Tarayici | `chrome` / `firefox` |
-| `headless` | Arayuzsuz calistir | `true` / `false` |
-| `explicit.wait.seconds` | Bekleme suresi (sn) | `10` |
+| Key                     | Description          | Example                     |
+| ----------------------- | -------------------- | --------------------------- |
+| `base.url`              | Site under test      | `https://www.saucedemo.com` |
+| `browser`               | Browser              | `chrome` / `firefox`        |
+| `headless`              | Run without UI       | `true` / `false`            |
+| `explicit.wait.seconds` | Wait timeout (sec)   | `10`                        |
 
-## SauceDemo Test Kullanicilari
+## SauceDemo Test Users
 
-| Kullanici | Sifre | Not |
-|-----------|-------|-----|
-| `standard_user` | `secret_sauce` | Normal kullanici |
-| `locked_out_user` | `secret_sauce` | Girisi engelli (hata verir) |
-| `problem_user` | `secret_sauce` | Bilerek bozuk davranislar |
-| `performance_glitch_user` | `secret_sauce` | Yavas yuklenir |
-| `error_user` / `visual_user` | `secret_sauce` | Ileri seviye hatali senaryolar |
+| Username                     | Password       | Notes                              |
+| ---------------------------- | -------------- | ---------------------------------- |
+| `standard_user`              | `secret_sauce` | Regular user                       |
+| `locked_out_user`            | `secret_sauce` | Locked out (login fails)           |
+| `problem_user`               | `secret_sauce` | Intentionally broken behavior      |
+| `performance_glitch_user`    | `secret_sauce` | Slow page loads                    |
+| `error_user` / `visual_user` | `secret_sauce` | Advanced error/visual scenarios    |
