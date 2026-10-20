@@ -5,7 +5,7 @@ import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
 
 /**
- * Checkout - Adim 3: Siparis tamamlandi onay sayfasi.
+ * Checkout - Step 3: Order complete confirmation page.
  */
 public class CheckoutCompletePage extends BasePage {
 
@@ -17,17 +17,17 @@ public class CheckoutCompletePage extends BasePage {
         super(driver);
     }
 
-    /** Onay basligini doner ("Thank you for your order!"). */
+    /** Returns the confirmation header ("Thank you for your order!"). */
     public String getConfirmationMessage() {
         return getText(completeHeader);
     }
 
-    /** Siparis basariyla tamamlandi mi? */
+    /** Was the order completed successfully? */
     public boolean isOrderComplete() {
         return isDisplayed(completeHeader);
     }
 
-    /** Ana sayfaya (urunlere) doner. */
+    /** Returns to the home page (products). */
     public ProductsPage clickBackHome() {
         click(backHomeButton);
         return new ProductsPage(driver);

@@ -6,13 +6,13 @@ import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
 
 /**
- * SauceDemo giris (login) sayfasi.  URL: https://www.saucedemo.com
+ * SauceDemo login page.  URL: https://www.saucedemo.com
  */
 public class LoginPage extends BasePage {
 
-    // --- Locator'lar ---
-    // SauceDemo, otomasyon icin ozel "data-test" attribute'lari sunar.
-    // Bunlar tasarim/CSS degisse bile sabit kalir -> en guvenilir locator turu.
+    // --- Locators ---
+    // SauceDemo provides dedicated "data-test" attributes for automation.
+    // They stay stable even if the design/CSS changes -> the most reliable locator type.
     private final By usernameInput = By.id("user-name");
     private final By passwordInput = By.id("password");
     private final By loginButton   = By.id("login-button");
@@ -22,7 +22,7 @@ public class LoginPage extends BasePage {
         super(driver);
     }
 
-    /** Login sayfasini acar. */
+    /** Opens the login page. */
     public LoginPage open() {
         driver.get(ConfigReader.getBaseUrl());
         return this;
@@ -38,13 +38,13 @@ public class LoginPage extends BasePage {
         return this;
     }
 
-    /** Login butonuna tiklar ve Urunler sayfasini doner. */
+    /** Clicks the login button and returns the Products page. */
     public ProductsPage clickLogin() {
         click(loginButton);
         return new ProductsPage(driver);
     }
 
-    /** Tek adimda giris yapar (BASARILI senaryolar icin pratik). */
+    /** Logs in in one step (handy for SUCCESSFUL scenarios). */
     public ProductsPage loginAs(String username, String password) {
         enterUsername(username);
         enterPassword(password);
@@ -52,8 +52,8 @@ public class LoginPage extends BasePage {
     }
 
     /**
-     * Giris bilgilerini doldurup butona basar ama sayfa gecisi VARSAYMADAN
-     * bu sayfada kalir. Basarisiz (negatif) senaryolarda kullan.
+     * Fills in the credentials and clicks the button, but stays on this page
+     * WITHOUT assuming navigation. Use for failed (negative) scenarios.
      */
     public LoginPage attemptLogin(String username, String password) {
         enterUsername(username);

@@ -14,21 +14,21 @@
         <maven.compiler.target>17</maven.compiler.target>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 
-        <!-- Bagimlilik surumleri tek yerde: guncellemek istersen sadece burayi degistir -->
+        <!-- Dependency versions in one place: update them here only -->
         <selenium.version>4.46.0</selenium.version>
         <testng.version>7.10.2</testng.version>
         <surefire.version>3.5.2</surefire.version>
     </properties>
 
     <dependencies>
-        <!-- Selenium 4: tarayici otomasyonu. Driver'i (chromedriver) otomatik yonetir. -->
+        <!-- Selenium 4: browser automation. Manages the driver (chromedriver) automatically. -->
         <dependency>
             <groupId>org.seleniumhq.selenium</groupId>
             <artifactId>selenium-java</artifactId>
             <version>${selenium.version}</version>
         </dependency>
 
-        <!-- TestNG: test kosum motoru (annotation'lar, assertion, dataprovider...) -->
+        <!-- TestNG: test runner (annotations, assertions, data providers...) -->
         <dependency>
             <groupId>org.testng</groupId>
             <artifactId>testng</artifactId>
@@ -39,7 +39,7 @@
 
     <build>
         <plugins>
-            <!-- Surefire: 'mvn test' calistiginda testng.xml'i bulup calistirir -->
+            <!-- Surefire: runs testng.xml when 'mvn test' is executed -->
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-surefire-plugin</artifactId>

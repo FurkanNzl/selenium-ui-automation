@@ -5,7 +5,7 @@ import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
 
 /**
- * Checkout - Adim 1: Musteri bilgileri (ad, soyad, posta kodu).
+ * Checkout - Step 1: Customer information (first name, last name, postal code).
  */
 public class CheckoutInfoPage extends BasePage {
 
@@ -35,7 +35,7 @@ public class CheckoutInfoPage extends BasePage {
         return this;
     }
 
-    /** Tum bilgileri tek seferde doldurur. */
+    /** Fills in all information at once. */
     public CheckoutInfoPage fillInformation(String firstName, String lastName, String postalCode) {
         enterFirstName(firstName);
         enterLastName(lastName);
@@ -43,7 +43,7 @@ public class CheckoutInfoPage extends BasePage {
         return this;
     }
 
-    /** Devam edip ozet (overview) sayfasini doner. */
+    /** Continues and returns the overview page. */
     public CheckoutOverviewPage clickContinue() {
         click(continueButton);
         return new CheckoutOverviewPage(driver);

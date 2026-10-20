@@ -12,14 +12,14 @@ import java.time.Duration;
 import java.util.List;
 
 /**
- * Tum Page Object'lerin miras aldigi TEMEL sinif.
+ * BASE class that all Page Objects extend.
  *
- * Ortak isleri (tiklama, yazma, metin okuma, bekleme) burada TEK yerde toplariz.
- * Boylece her sayfada ayni bekleme kodunu tekrar yazmayiz (DRY prensibi).
+ * Common actions (click, type, read text, wait) live here in ONE place,
+ * so the same wait logic is not repeated on every page (DRY principle).
  *
- * ONEMLI: Hicbir yerde Thread.sleep() KULLANMIYORUZ.
- * Onun yerine "explicit wait" (WebDriverWait) ile elementin hazir olmasini bekliyoruz.
- * Bu, testleri hem daha HIZLI hem daha GUVENILIR (flaky olmayan) yapar.
+ * IMPORTANT: Thread.sleep() is NEVER used.
+ * Instead, explicit waits (WebDriverWait) wait until the element is ready.
+ * This makes tests both FASTER and more RELIABLE (not flaky).
  */
 public abstract class BasePage {
 
@@ -31,36 +31,36 @@ public abstract class BasePage {
         this.wait = new WebDriverWait(driver, Duration.ofSeconds(ConfigReader.getExplicitWait()));
     }
 
-    /** Element gorunur olana kadar bekleyip doner. */
+    /** Waits until the element is visible and returns it. */
     protected WebElement waitForVisible(By locator) {
         return wait.until(ExpectedConditions.visibilityOfElementLocated(locator));
     }
 
-    /** Element tiklanabilir olana kadar bekleyip doner. */
+    /** Waits until the element is clickable and returns it. */
     protected WebElement waitForClickable(By locator) {
         return wait.until(ExpectedConditions.elementToBeClickable(locator));
     }
 
-    /** Elemente guvenli tiklama (once tiklanabilir olmasini bekler). */
+    /** Safe click (waits for the element to be clickable first). */
     protected void click(By locator) {
         waitForClickable(locator).click();
     }
 
-    /** Input alanini temizleyip metin yazar. */
+    /** Clears the input field and types the text. */
     protected void type(By locator, String text) {
         WebElement element = waitForVisible(locator);
         element.clear();
         element.sendKeys(text);
     }
 
-    /** Elementin metnini doner. */
+    /** Returns the element's text. */
     protected String getText(By locator) {
         return waitForVisible(locator).getText();
     }
 
     /**
-     * Element sayfada gorunur mu? Yoksa exception yerine false doner.
-     * (Not: element yoksa 'explicit.wait.seconds' kadar bekleyip false doner.)
+     * Is the element visible on the page? Returns false instead of throwing.
+     * (Note: if the element is missing, waits 'explicit.wait.seconds' then returns false.)
      */
     protected boolean isDisplayed(By locator) {
         try {
@@ -70,19 +70,19 @@ public abstract class BasePage {
         }
     }
 
-    /** Locator'a uyan TUM elementleri doner. */
+    /** Returns ALL elements matching the locator. */
     protected List<WebElement> findAll(By locator) {
         wait.until(ExpectedConditions.presenceOfElementLocated(locator));
         return driver.findElements(locator);
     }
 
-    /** Dropdown'dan "value" attribute'una gore secim yapar. */
+    /** Selects a dropdown option by its "value" attribute. */
     protected void selectByValue(By locator, String value) {
         Select select = new Select(waitForVisible(locator));
         select.selectByValue(value);
     }
 
-    /** Mevcut URL'i doner. */
+    /** Returns the current URL. */
     public String getCurrentUrl() {
         return driver.getCurrentUrl();
     }

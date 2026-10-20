@@ -8,27 +8,27 @@ import org.testng.annotations.DataProvider;
 import org.testng.annotations.Test;
 
 /**
- * Giris (login) senaryolari.
+ * Login scenarios.
  *
- * TestNG'nin @DataProvider ozelligi ile AYNI testi FARKLI verilerle
- * calistiriyoruz (data-driven testing). 4 satir veri = 4 ayri test kosumu.
+ * Uses TestNG's @DataProvider to run the SAME test with DIFFERENT data
+ * (data-driven testing). 4 rows of data = 4 separate test runs.
  */
 public class LoginTest extends BaseTest {
 
-    @Test(description = "Gecerli kullanici ile giris basarili olmali, Urunler sayfasi acilmali")
+    @Test(description = "Valid user should log in successfully and land on the Products page")
     public void validLoginShouldSucceed() {
         LoginPage loginPage = new LoginPage(driver).open();
         ProductsPage productsPage = loginPage.loginAs("standard_user", "secret_sauce");
 
         Assert.assertTrue(productsPage.isLoaded(),
-                "Giris sonrasi Urunler sayfasi yuklenmedi!");
+                "Products page did not load after login!");
         Assert.assertEquals(productsPage.getProductCount(), 6,
-                "Urunler sayfasinda beklenen urun sayisi 6 degil!");
+                "Expected 6 products on the Products page!");
     }
 
     /**
-     * Gecersiz giris senaryolari icin veri seti.
-     * Her satir: { kullaniciAdi, sifre, beklenenHataMetniParcasi }
+     * Data set for invalid login scenarios.
+     * Each row: { username, password, expectedErrorFragment }
      */
     @DataProvider(name = "invalidLoginData")
     public Object[][] invalidLoginData() {
@@ -41,15 +41,15 @@ public class LoginTest extends BaseTest {
     }
 
     @Test(dataProvider = "invalidLoginData",
-          description = "Gecersiz giris denemeleri uygun hata mesajini gostermeli")
+          description = "Invalid login attempts should show the correct error message")
     public void invalidLoginShouldShowError(String username, String password, String expectedError) {
         LoginPage loginPage = new LoginPage(driver).open();
         loginPage.attemptLogin(username, password);
 
         Assert.assertTrue(loginPage.isErrorDisplayed(),
-                "Hata mesaji gorunmuyor! Girdi: '" + username + "' / '" + password + "'");
+                "Error message not displayed! Input: '" + username + "' / '" + password + "'");
         Assert.assertTrue(loginPage.getErrorMessage().contains(expectedError),
-                "Beklenen hata cikmadi. Beklenen: '" + expectedError
-                        + "' | Gercek: '" + loginPage.getErrorMessage() + "'");
+                "Unexpected error message. Expected: '" + expectedError
+                        + "' | Actual: '" + loginPage.getErrorMessage() + "'");
     }
 }

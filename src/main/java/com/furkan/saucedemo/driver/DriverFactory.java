@@ -10,22 +10,22 @@ import org.openqa.selenium.firefox.FirefoxOptions;
 import java.time.Duration;
 
 /**
- * WebDriver nesnesini olusturan ve yoneten sinif.
+ * Creates and manages the WebDriver instance.
  *
- * ThreadLocal kullaniyoruz: ileride testleri PARALEL calistirirsan
- * her thread (her test) KENDI driver'ina sahip olur, birbirine karismaz.
+ * Uses ThreadLocal: if tests are run in PARALLEL, each thread (each test)
+ * gets ITS OWN driver, so they never interfere with each other.
  *
- * NOT: Selenium 4.6+ ile gelen "Selenium Manager" dogru driver'i
- * (chromedriver/geckodriver) OTOMATIK indirir. Yani elle driver indirmene
- * veya WebDriverManager eklemene GEREK YOK. Sadece tarayici kurulu olsun.
+ * NOTE: "Selenium Manager" (Selenium 4.6+) downloads the right driver
+ * (chromedriver/geckodriver) AUTOMATICALLY. There is NO need to download
+ * drivers manually or add WebDriverManager. Only the browser must be installed.
  */
 public class DriverFactory {
 
-    // Her thread icin ayri WebDriver tutar.
+    // Holds a separate WebDriver for each thread.
     private static final ThreadLocal<WebDriver> driver = new ThreadLocal<>();
 
     /**
-     * config.properties'teki "browser" degerine gore driver olusturur.
+     * Creates the driver based on the "browser" value in config.properties.
      */
     public static void initDriver() {
         String browser = ConfigReader.getBrowser().toLowerCase();
@@ -55,19 +55,19 @@ public class DriverFactory {
                 break;
         }
 
-        // Implicit wait KULLANMIYORUZ (explicit wait ile karisirsa sorun cikar).
-        // Sadece sayfa yuklenme timeout'u koyuyoruz - kucuk bir guvenlik agi.
+        // NO implicit wait (mixing it with explicit waits causes problems).
+        // Only a page load timeout is set - a small safety net.
         webDriver.manage().timeouts().pageLoadTimeout(Duration.ofSeconds(30));
 
         driver.set(webDriver);
     }
 
-    /** Aktif thread'in driver'ini doner. Testlerde bunu kullan. */
+    /** Returns the current thread's driver. Use this in tests. */
     public static WebDriver getDriver() {
         return driver.get();
     }
 
-    /** Tarayiciyi kapatir ve ThreadLocal'i temizler (bellek sizintisini onler). */
+    /** Quits the browser and clears the ThreadLocal (prevents memory leaks). */
     public static void quitDriver() {
         if (driver.get() != null) {
             driver.get().quit();

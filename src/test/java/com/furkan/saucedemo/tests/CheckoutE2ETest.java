@@ -11,44 +11,44 @@ import org.testng.Assert;
 import org.testng.annotations.Test;
 
 /**
- * Uctan uca (end-to-end) satin alma senaryosu:
- * Giris -> urun ekle -> sepet -> checkout bilgileri -> ozet -> siparisi tamamla.
+ * End-to-end purchase scenario:
+ * Login -> add products -> cart -> checkout info -> overview -> complete order.
  *
- * Bu test, Page Object'lerin birbirine nasil "zincir" halinde baglandigini gosterir:
- * her metot bir sonraki sayfanin Page Object'ini doner.
+ * This test shows how Page Objects are "chained" together:
+ * each method returns the Page Object of the next page.
  */
 public class CheckoutE2ETest extends BaseTest {
 
-    @Test(description = "Kullanici urun secip siparisi bastan sona tamamlayabilmeli")
+    @Test(description = "User should be able to select products and complete an order end to end")
     public void completePurchaseFlow() {
-        // 1) Giris
+        // 1) Login
         LoginPage loginPage = new LoginPage(driver).open();
         ProductsPage productsPage = loginPage.loginAs("standard_user", "secret_sauce");
-        Assert.assertTrue(productsPage.isLoaded(), "Giris basarisiz.");
+        Assert.assertTrue(productsPage.isLoaded(), "Login failed.");
 
-        // 2) Urunleri sepete ekle
+        // 2) Add products to the cart
         productsPage.addProductToCart("Sauce Labs Backpack")
                     .addProductToCart("Sauce Labs Bolt T-Shirt");
-        Assert.assertEquals(productsPage.getCartCount(), 2, "Sepette 2 urun olmali.");
+        Assert.assertEquals(productsPage.getCartCount(), 2, "Cart should contain 2 products.");
 
-        // 3) Sepete git ve dogrula
+        // 3) Go to the cart and verify
         CartPage cartPage = productsPage.goToCart();
-        Assert.assertEquals(cartPage.getItemCount(), 2, "Sepet sayfasinda 2 urun olmali.");
+        Assert.assertEquals(cartPage.getItemCount(), 2, "Cart page should show 2 products.");
 
-        // 4) Checkout - bilgileri gir
+        // 4) Checkout - enter information
         CheckoutInfoPage infoPage = cartPage.clickCheckout();
         CheckoutOverviewPage overviewPage =
                 infoPage.fillInformation("Furkan", "Test", "34000").clickContinue();
 
-        // 5) Ozet sayfasini dogrula
-        Assert.assertEquals(overviewPage.getItemCount(), 2, "Ozet sayfasinda 2 urun olmali.");
+        // 5) Verify the overview page
+        Assert.assertEquals(overviewPage.getItemCount(), 2, "Overview page should show 2 products.");
         Assert.assertTrue(overviewPage.getTotalText().contains("Total"),
-                "Toplam tutar bilgisi gorunmuyor.");
+                "Order total is not displayed.");
 
-        // 6) Siparisi tamamla ve onayi dogrula
+        // 6) Complete the order and verify confirmation
         CheckoutCompletePage completePage = overviewPage.clickFinish();
-        Assert.assertTrue(completePage.isOrderComplete(), "Siparis tamamlanmadi!");
+        Assert.assertTrue(completePage.isOrderComplete(), "Order was not completed!");
         Assert.assertEquals(completePage.getConfirmationMessage(), "Thank you for your order!",
-                "Onay mesaji beklenenden farkli.");
+                "Confirmation message does not match.");
     }
 }

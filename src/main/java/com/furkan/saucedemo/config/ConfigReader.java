@@ -4,27 +4,27 @@ import java.io.InputStream;
 import java.util.Properties;
 
 /**
- * config.properties dosyasini okuyan yardimci sinif.
+ * Helper class that reads config.properties.
  *
- * URL, tarayici, bekleme suresi gibi ayarlari KODDAN AYIRIR.
- * Boylece ortam degisince (farkli URL, farkli tarayici) kodu degistirmene
- * gerek kalmaz; sadece config.properties'i degistirirsin.
+ * Keeps settings such as URL, browser and wait time OUT OF THE CODE.
+ * When the environment changes (different URL or browser), there is no need
+ * to touch the code; just update config.properties.
  */
 public class ConfigReader {
 
     private static final Properties properties = new Properties();
 
-    // static blok: sinif ilk kullanildiginda dosyayi BIR KEZ yukler.
+    // Static block: loads the file ONCE, when the class is first used.
     static {
         try (InputStream input = ConfigReader.class.getClassLoader()
                 .getResourceAsStream("config.properties")) {
             if (input == null) {
                 throw new RuntimeException(
-                        "config.properties bulunamadi! src/test/resources altinda olmali.");
+                        "config.properties not found! It must be under src/test/resources.");
             }
             properties.load(input);
         } catch (Exception e) {
-            throw new RuntimeException("config.properties okunurken hata: " + e.getMessage(), e);
+            throw new RuntimeException("Error reading config.properties: " + e.getMessage(), e);
         }
     }
 

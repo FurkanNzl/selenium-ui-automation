@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE suite SYSTEM "https://testng.org/testng-1.0.dtd">
 
-<!-- Bu dosya "hangi testler, hangi sirayla" calisacagini belirler.
-     Yeni test sinifi eklediginde buraya da <class> satirini eklemeyi unutma. -->
+<!-- This file defines which tests run and in what order.
+     When you add a new test class, remember to add its <class> line here. -->
 <suite name="SauceDemo UI Test Suite" verbose="1">
 
     <test name="Login Tests">

@@ -6,12 +6,12 @@ import org.testng.annotations.AfterMethod;
 import org.testng.annotations.BeforeMethod;
 
 /**
- * Tum test siniflarinin miras aldigi TEMEL test sinifi.
+ * BASE test class that all test classes extend.
  *
- * @BeforeMethod: HER test metodundan ONCE calisir  -> tarayiciyi acar.
- * @AfterMethod:  HER test metodundan SONRA calisir -> tarayiciyi kapatir.
+ * @BeforeMethod: runs BEFORE each test method -> opens the browser.
+ * @AfterMethod:  runs AFTER each test method  -> closes the browser.
  *
- * Boylece her test TEMIZ bir tarayicida, birbirinden BAGIMSIZ calisir.
+ * This way every test runs in a CLEAN browser, INDEPENDENT of the others.
  */
 public class BaseTest {
 

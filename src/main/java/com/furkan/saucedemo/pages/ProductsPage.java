@@ -8,7 +8,7 @@ import org.openqa.selenium.WebElement;
 import java.util.List;
 
 /**
- * Urunler (inventory) sayfasi. Basarili giris sonrasi buraya gelinir.
+ * Products (inventory) page. Reached after a successful login.
  */
 public class ProductsPage extends BasePage {
 
@@ -22,20 +22,20 @@ public class ProductsPage extends BasePage {
         super(driver);
     }
 
-    /** Urunler sayfasi yuklendi mi? ("Products" basligi gorunuyor mu) */
+    /** Is the Products page loaded? (Is the "Products" title visible?) */
     public boolean isLoaded() {
         return isDisplayed(pageTitle) && getText(pageTitle).equalsIgnoreCase("Products");
     }
 
-    /** Sayfadaki toplam urun sayisi (SauceDemo'da 6 olmali). */
+    /** Total number of products on the page (6 on SauceDemo). */
     public int getProductCount() {
         return findAll(inventoryItems).size();
     }
 
     /**
-     * Ismi verilen urunu sepete ekler.
-     * Urun adindan o urunun "Add to cart" butonuna XPath ile ulasiyoruz
-     * (relative/dinamik locator ornegi).
+     * Adds the given product to the cart.
+     * Finds that product's "Add to cart" button from its name using XPath
+     * (an example of a relative/dynamic locator).
      */
     public ProductsPage addProductToCart(String productName) {
         By addButton = By.xpath(
@@ -45,7 +45,7 @@ public class ProductsPage extends BasePage {
         return this;
     }
 
-    /** Sepet rozetindeki sayi. Rozet yoksa (sepet bossa) 0 doner. */
+    /** Number on the cart badge. Returns 0 if there is no badge (empty cart). */
     public int getCartCount() {
         List<WebElement> badges = driver.findElements(cartBadge);
         if (badges.isEmpty()) {
@@ -55,15 +55,15 @@ public class ProductsPage extends BasePage {
     }
 
     /**
-     * Siralama dropdown'undan value ile secim yapar.
-     * Secenekler: az (A-Z), za (Z-A), lohi (fiyat artan), hilo (fiyat azalan).
+     * Selects a sort option from the dropdown by value.
+     * Options: az (A-Z), za (Z-A), lohi (price low to high), hilo (price high to low).
      */
     public ProductsPage sortBy(String value) {
         selectByValue(sortDropdown, value);
         return this;
     }
 
-    /** Sepet ikonuna tiklayip Sepet sayfasini doner. */
+    /** Clicks the cart icon and returns the Cart page. */
     public CartPage goToCart() {
         click(cartLink);
         return new CartPage(driver);

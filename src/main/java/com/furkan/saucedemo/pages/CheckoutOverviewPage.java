@@ -5,7 +5,7 @@ import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
 
 /**
- * Checkout - Adim 2: Siparis ozeti (urunler, ara toplam, vergi, toplam).
+ * Checkout - Step 2: Order overview (items, subtotal, tax, total).
  */
 public class CheckoutOverviewPage extends BasePage {
 
@@ -35,7 +35,7 @@ public class CheckoutOverviewPage extends BasePage {
         return getText(totalLabel);
     }
 
-    /** Siparisi tamamlar ve onay sayfasini doner. */
+    /** Completes the order and returns the confirmation page. */
     public CheckoutCompletePage clickFinish() {
         click(finishButton);
         return new CheckoutCompletePage(driver);

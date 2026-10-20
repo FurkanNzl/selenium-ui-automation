@@ -9,7 +9,7 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 /**
- * Sepet (cart) sayfasi.
+ * Cart page.
  */
 public class CartPage extends BasePage {
 
@@ -22,19 +22,19 @@ public class CartPage extends BasePage {
         super(driver);
     }
 
-    /** Sepetteki urun sayisi. */
+    /** Number of products in the cart. */
     public int getItemCount() {
         return driver.findElements(cartItems).size();
     }
 
-    /** Sepetteki urun adlarini liste olarak doner. */
+    /** Returns the names of products in the cart as a list. */
     public List<String> getItemNames() {
         return findAll(itemNames).stream()
                 .map(WebElement::getText)
                 .collect(Collectors.toList());
     }
 
-    /** Ismi verilen urunu sepetten cikarir. */
+    /** Removes the given product from the cart. */
     public CartPage removeItem(String productName) {
         By removeButton = By.xpath(
                 "//div[@data-test='inventory-item' and .//div[@data-test='inventory-item-name'"
@@ -43,13 +43,13 @@ public class CartPage extends BasePage {
         return this;
     }
 
-    /** "Continue Shopping" ile urunlere geri doner. */
+    /** Returns to the products via "Continue Shopping". */
     public ProductsPage continueShopping() {
         click(continueShopping);
         return new ProductsPage(driver);
     }
 
-    /** Checkout butonuna tiklayip bilgi giris sayfasini doner. */
+    /** Clicks Checkout and returns the information page. */
     public CheckoutInfoPage clickCheckout() {
         click(checkoutButton);
         return new CheckoutInfoPage(driver);
